@@ -1,0 +1,66 @@
+DetectHiddenWindows, On
+
+OnMessage(0x404,"ahti")
+ahti(wParam, lParam) 
+{
+If (lparam = 517)
+	{
+	Menu, Running, DeleteAll
+	Gosub, RefreshTray
+	}
+}
+
+RefreshTray:
+Menu, Tray, NoStandard ; remove standard Menu items
+RunningScripts()
+Menu, Tray, Add, &Exit, Exit	
+return
+
+Exit:
+Exitapp
+return
+
+RunscriptReload:
+PostMessage, 0x0111, 65303,,, % A_thismenu  ; Reload.
+Return
+
+RunScriptPause:
+TogPauseP1 := (TogPauseP1 = "" ? TogPauseP1 = 1 : TogPauseP1 = 0)
+Menu, % A_thismenu, ToggleCheck, % A_thismenuitem
+PostMessage, 0x111, 65306,,, % A_thismenu
+return
+
+RunScriptSuspend:
+TogPauseS1 := (TogPauseS1 = "" ? TogPauseS1 = 1 : TogPauseS1 = 0)
+Menu, % A_thismenu, ToggleCheck, % A_thismenuitem
+PostMessage, 0x111, 65305,,, % A_thismenu
+return
+
+RunScriptEdit:
+Men1 := """" A_thismenu """"
+Run, Notepad++.exe %Men1%
+return
+
+RunScriptExit:
+WinClose % A_thismenu
+return
+
+RunningScripts()
+	{
+	WinGet, List, List, ahk_class AutoHotkey
+	Loop % List 
+		{
+		WinGetTitle, title, % "ahk_id" List%A_Index%
+		If not instr(title,"C:\Program Files\AutoHotkey\UX\launcher.ahk")
+			{	
+			Script1 := RegExReplace(title, " - AutoHotkey v[\.0-9]+$")
+			Loop, Parse, % "Edit,Reload,Pause,Suspend,Exit", `,
+				Menu, %Script1%, Add, &%A_loopfield%, Runscript%A_loopfield%
+			Loop, Parse, Script1, `\
+				Script2 := A_loopfield	
+			Menu, Running, Add, % Script2, :%Script1%		
+			}
+		}
+	Menu, Tray, Add, RunningScripts, :Running		
+return
+}
