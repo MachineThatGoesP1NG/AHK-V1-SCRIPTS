@@ -1,18 +1,17 @@
 OnClipboardChange("ClipChanged")
-Global ClipVar
 
 ClipChanged(Type)
 {
 If (TogClipGate != 1)
 If Clipboard is not space
 	{
-	Array := StrSplit(Clipboard,0, "`r`n" A_space "`t")
-	ClipVar := (ClipVar = "" ? Array[1] : Array[1] "|" ClipVar)
+	Array := StrSplit(Clipboard,"¤¥¦§©ª«®µ¶", "`r`n" A_space "`t")
+	Global ClipVar := (ClipVar = "" ? Array[1] : Array[1] "|" ClipVar)
 	Loop, Parse, ClipVar, `|
-		{
+		{ 
 		MenuVar := SubStr(A_loopfield,1, 50)
 		MenuVar := (MenuVar = "" ? A_loopfield : MenuVar)
-		If (a_index = 1)
+		If (a_index = 1) 
 			{ 
 			LoopVar := A_loopfield
 			Menu, MyMenu, add,,                                   
@@ -48,7 +47,7 @@ if (a_index  = A_thismenuitempos)
 }
 return
 
-!v::                                               
+!v::
 If ClipVar is not space        
 	Menu, MyMenu, Show   
 Else 
