@@ -1,0 +1,60 @@
+OnClipboardChange("ClipChanged")
+Global ClipVar
+
+ClipChanged(Type)
+{
+If (TogClipGate != 1)
+If Clipboard is not space
+	{
+	Array := StrSplit(Clipboard,0, "`r`n" A_space "`t")
+	ClipVar := (ClipVar = "" ? Array[1] : Array[1] "|" ClipVar)
+	Loop, Parse, ClipVar, `|
+		{
+		MenuVar := SubStr(A_loopfield,1, 50)
+		MenuVar := (MenuVar = "" ? A_loopfield : MenuVar)
+		If (a_index = 1)
+			{ 
+			LoopVar := A_loopfield
+			Menu, MyMenu, add,,                                   
+			Menu, Mymenu, DeleteAll
+			Menu, MyMenu, add, %a_index%. %MenuVar%, MenuHand                                   	
+			}
+		Else If (a_index < 10)
+			{
+			LoopVar := LoopVar "|" A_loopfield
+			Menu, MyMenu, add, %a_index%. %MenuVar%, MenuHand
+			}
+		}	
+	ClipVar := LoopVar
+	LoopVar := ""
+	Tooltip, Copied    
+	sleep 600                                                        
+	Tooltip  
+	}
+}
+return
+
+MenuHand:                                                            
+Loop, parse, ClipVar, `|              
+{
+if (a_index  = A_thismenuitempos)         
+	{                                           
+	global TogClipGate = 1                                          
+	sleep 200
+	clipboard := A_loopfield
+	send, ^v
+	Global TogClipGate = 0
+	}
+}
+return
+
+!v::                                               
+If ClipVar is not space        
+	Menu, MyMenu, Show   
+Else 
+	{
+	Tooltip, Empty
+	sleep 600
+	tooltip
+	}
+return
