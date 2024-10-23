@@ -1,0 +1,91 @@
+;| https://mmcr.net/spanish-characters/ 
+
+#notrayicon
+
+ChrList := 
+(
+Chr(0225)","Chr(0193)"
+"Chr(0233)","Chr(0201)"
+"Chr(0205)","Chr(0237)"
+"Chr(0243)","Chr(0211)"
+"Chr(0241)","Chr(0209)"
+"Chr(0250)","Chr(0218)"
+"Chr(0252)","Chr(0220)"
+"Chr(0161)"
+"Chr(0191)
+)
+
+Loop, parse, ChrList, `n
+	{
+	Outindex := A_Index
+	Array := Strsplit(A_loopfield,",")
+	Loop, 5
+	If (array[A_Index] != "") & (A_index < 8)
+		Menu, SM%Outindex%, Add, % A_index "." A_space Array[A_index], MenuHandler
+	Menu, MyMenu, Add, % A_Index "." " " Array[1], :SM%Outindex%
+	}
+return
+
+!q::
+Menu, Mymenu, Show
+return
+
+MenuHandler:
+Chrsend := Strsplit(A_ThisMenuItem,"."A_space)
+send % ChrSend[2]
+return
+
+; - Hotkeys
+
++^!a::
+^!a::
+Send, % (1 = Instr(A_thishotkey,"+") ? Chr(0193) : Chr(0225))
+Return
+
++^!e::
+^!e::
+Send, % (1 = Instr(A_thishotkey, "+") ? Chr(0201) : Chr(0233))
+Return
+
++^!i::
+^!i::
+Send, % (1 = Instr(A_thishotkey, "+") ? Chr(0205) : Chr(0237))
+Return
+
++^!o::
+^!o::
+Send, % (1 = Instr(A_thishotkey, "+") ? Chr(0211) : Chr(0243))
+Return
+
++^!n::
+^!n::
+Send, % (1 = Instr(A_thishotkey, "+") ? Chr(0209) : Chr(0241))
+Return
+
++^!u::
+^!u::
+Send, % (1 = Instr(A_thishotkey, "+") ? Chr(0218) : Chr(0250))
+Return
+
+^<!/:: ; ?
+^!1:: ; !
+AV1 := (A_thishotkey = "^<!/" ? Chr(0191) : Chr(0161))
+Clipboard := ""
+Send, ^c
+If Clipboard is not space
+	{
+	Clipboard := HasSpace(Clipboard) AV1 Trim(Clipboard) (AV1 = Chr(0191) ? "?" : "!") HasSpace(Clipboard, 1)  
+	ClipWait
+	send ^v
+	}
+Else 
+	Send, % AV1
+AV1 = 
+return
+
+HasSpace(str, reverse:= false)
+{
+if SubStr(str, reverse ? StrLen(str) : 1, 1) = A_Space
+return A_space
+}
+return
