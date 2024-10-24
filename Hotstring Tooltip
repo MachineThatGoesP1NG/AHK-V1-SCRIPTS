@@ -1,0 +1,10 @@
+:*B0x:Ahk::HSTT("AutoHotKey")
+
+HSTT(HSA1)
+   {
+   Hotstring(":?O:"StrReplace(a_thishotkey, ":*B0x:"),HSA1,1)
+   Tooltip % HSA1, (A_CaretX + 10), (A_CaretY - 20)
+   Input,opv, l1 V t20, {Backspace}{Up}{Down}{Left}{Right}
+   Tooltip
+   }
+return
