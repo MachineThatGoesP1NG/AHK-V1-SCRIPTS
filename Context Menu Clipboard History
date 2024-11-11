@@ -1,7 +1,6 @@
 OnClipboardChange("ClipChanged")
 
-ClipChanged(Type) 
-{
+ClipChanged(Type) {
 If (TogClipGate != 1)  
 	If Clipboard is not space
 		GoSub, ClipMenu
