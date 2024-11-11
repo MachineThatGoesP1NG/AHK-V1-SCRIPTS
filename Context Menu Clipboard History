@@ -1,54 +1,41 @@
 OnClipboardChange("ClipChanged")
 
-ClipChanged(Type)
+ClipChanged(Type) 
 {
-If (TogClipGate != 1)
-If Clipboard is not space
-	{
-	Array := StrSplit(Clipboard,"¤¥¦§©ª«®µ¶", "`r`n" A_space "`t")
-	Global ClipVar := (ClipVar = "" ? Array[1] : Array[1] "|" ClipVar)
-	Loop, Parse, ClipVar, `|
-		{ 
-		MenuVar := SubStr(A_loopfield,1, 50)
-		MenuVar := (MenuVar = "" ? A_loopfield : MenuVar)
-		If (a_index = 1) 
-			{ 
-			LoopVar := A_loopfield
-			Menu, MyMenu, add,,                                   
-			Menu, Mymenu, DeleteAll
-			Menu, MyMenu, add, %a_index%. %MenuVar%, MenuHand                                   	
-			}
-		Else If (a_index < 10)
-			{
-			LoopVar := LoopVar "|" A_loopfield
-			Menu, MyMenu, add, %a_index%. %MenuVar%, MenuHand
-			}
-		}	
-	ClipVar := LoopVar
-	LoopVar := ""
-	Tooltip, Copied    
-	sleep 600                                                        
-	Tooltip  
-	}
+If (TogClipGate != 1)  
+	If Clipboard is not space
+		GoSub, ClipMenu
 }
 return
 
-MenuHand:                                                            
-Loop, parse, ClipVar, `|              
-{
-if (a_index  = A_thismenuitempos)         
-	{                                           
-	global TogClipGate = 1                                          
-	sleep 200
-	clipboard := A_loopfield
-	send, ^v
-	Global TogClipGate = 0
+ClipMenu:
+{		
+Menu, MyMenu, add,,                                   
+Menu, Mymenu, DeleteAll
+Loop, 8
+	{
+	Index1 := (9 - A_index)
+	Index2 := (10 - A_index)
+	ClipVar%Index2% := ClipVar%Index1%
 	}
+Clipvar1 := Clipboard
+Loop, 9      
+	{
+		ClipTrim := RegExReplace(Clipvar%A_index%, "\s")
+		ClipVarSub := SubStr(ClipTrim,1, 50)	
+		If (A_index = 1) 
+			Menu, MyMenu, add, 1. %Clipvarsub%, MenuHand 
+		Else, If (Clipvar%a_index% != "")
+			Menu, MyMenu, add, %A_index%. %ClipVarSub%, MenuHand                                   	
+	}
+Tooltip, Copied    
+sleep 600                                                        
+Tooltip
 }
 return
 
 !v::
-If ClipVar is not space        
+If ClipVar1 is not space        
 	Menu, MyMenu, Show   
 Else 
 	{
@@ -56,4 +43,12 @@ Else
 	sleep 600
 	tooltip
 	}
+return
+
+MenuHand:                                                                                              
+Global TogClipGate = 1                                          
+sleep 200
+clipboard := ClipVar%A_thismenuItemPos%
+send, ^v
+TogClipGate = 0
 return
